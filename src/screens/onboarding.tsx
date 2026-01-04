@@ -169,13 +169,22 @@ const Onboarding = () => {
         <Pressable
           style={styles.button}
           onPress={() => {
-            navigation.reset({
-              index: 0,
-              routes: [{ name: 'Login' as never }],
-            });
+            if (currentIndex < slides.length - 1) {
+              slidesRef.current?.scrollToIndex({
+                index: currentIndex + 1,
+                animated: true,
+              });
+            } else {
+              navigation.reset({
+                index: 0,
+                routes: [{ name: 'Login' as never }],
+              });
+            }
           }}
         >
-          <Text style={styles.buttonText}>Get Started</Text>
+          <Text style={styles.buttonText}>
+            {currentIndex === slides.length - 1 ? 'Get Started' : 'Next'}
+          </Text>
         </Pressable>
       </View>
     </SafeAreaView>

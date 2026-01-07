@@ -1,5 +1,5 @@
 import { useNavigation } from '@react-navigation/native';
-import React, { useState } from 'react';
+import React, { memo, useState } from 'react';
 import { useEffect } from 'react';
 import {
   KeyboardAvoidingView,
@@ -11,11 +11,14 @@ import {
   View,
   Text,
   ToastAndroid,
+  Dimensions,
 } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { storage } from '../storage';
 import * as Clipboard from 'expo-clipboard';
+
+const screenHeight = Dimensions.get('window').height;
 
 const COLORS = {
   primary: '#5B4CE6',
@@ -27,6 +30,42 @@ const COLORS = {
   border: '#E0E0E0',
   white: '#FFFFFF',
 };
+
+const QuoteDisplay = memo(
+  ({
+    quote,
+    author,
+    onCopy,
+  }: {
+    quote: string;
+    author: string;
+    onCopy: () => void;
+  }) => {
+    console.log('QuoteDisplay rendered'); // You'll see this only when quote/author changes
+    return (
+      <Pressable
+        onPress={onCopy}
+        style={{
+          marginVertical: 16,
+          borderRadius: 8,
+          borderLeftWidth: 8,
+          borderLeftColor: 'aqua',
+          backgroundColor: 'aliceblue',
+          alignContent: 'center',
+          justifyContent: 'center',
+          height: screenHeight * 0.3,
+          padding: 8,
+          gap: 8,
+        }}
+      >
+        <Text style={{ fontSize: 18, fontStyle: 'italic' }}>{quote}</Text>
+        <Text style={{ fontSize: 18, textAlign: 'right', fontStyle: 'italic' }}>
+          –{author}
+        </Text>
+      </Pressable>
+    );
+  },
+);
 
 const Home = () => {
   const navigation = useNavigation();
@@ -77,6 +116,7 @@ const Home = () => {
   }, []);
 
   const onRefresh = () => {
+    console.log('Refreshed');
     setRefreshing(true);
     getQuote();
     setTimeout(() => {
@@ -114,7 +154,12 @@ const Home = () => {
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: 20 }}
+          contentContainerStyle={{
+            paddingBottom: 20,
+            justifyContent: 'center',
+            alignContent: 'center',
+            alignSelf: 'center',
+          }}
           keyboardShouldPersistTaps="handled"
           style={{ flex: 1 }}
           nestedScrollEnabled={true}
@@ -137,17 +182,22 @@ const Home = () => {
               borderLeftWidth: 8,
               borderLeftColor: 'aqua',
               backgroundColor: 'aliceblue',
+              alignContent: 'center',
+              justifyContent: 'center',
+              height: screenHeight * 0.25,
               padding: 8,
               gap: 8,
             }}
           >
-            <Text style={{ fontSize: 16, fontStyle: 'italic' }}>{quote}</Text>
+            <Text style={{ fontSize: 18, fontStyle: 'italic' }}>{quote}</Text>
             <Text
-              style={{ fontSize: 16, textAlign: 'right', fontStyle: 'italic' }}
+              style={{ fontSize: 18, textAlign: 'right', fontStyle: 'italic' }}
             >
               –{author}
             </Text>
           </Pressable>
+
+          {/* <Text>{Math.floor(Math.random() * 100) + 1}</Text> */}
 
           <Text style={{ marginBottom: 8, fontSize: 18 }}>
             What did I learn today?
@@ -163,8 +213,7 @@ const Home = () => {
               borderColor: 'green',
               borderRadius: 12,
               paddingBottom: 10,
-              // minHeight: 100,
-              // maxHeight: 150,
+              height: screenHeight * 0.12,
               fontSize: 16,
             }}
           />
@@ -183,6 +232,7 @@ const Home = () => {
               marginBottom: 30,
               borderColor: 'green',
               borderRadius: 12,
+              height: screenHeight * 0.12,
               borderWidth: 1.5,
               paddingBottom: 10,
               fontSize: 16,
@@ -190,7 +240,6 @@ const Home = () => {
           />
         </ScrollView>
 
-        {/* Button outside ScrollView */}
         <Pressable
           disabled={learn === '' || solve === ''}
           onPress={() => setActivity()}

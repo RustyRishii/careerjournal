@@ -45,12 +45,6 @@ const Login = () => {
 
       <View style={{ marginVertical: 64 }} />
 
-      {/* <Text style={{ marginBottom: 8 }}>Email Address</Text>
-      <TextInput
-        style={{ borderRadius: 8, borderWidth: 1 }}
-        placeholder="name@gmail.com"
-      /> */}
-
       <Pressable
         onPress={() =>
           navigation.reset({
@@ -75,7 +69,22 @@ const Login = () => {
           width={'10%'}
           height={'100%'}
         />
-        <Text style={{ fontSize: 16 }}>Sign in with google</Text>
+        <Text style={{ fontSize: 20 }}>Sign in with google</Text>
+      </Pressable>
+
+      <Pressable
+        onPress={() =>
+          navigation.reset({
+            index: 0,
+            routes: [{ name: 'BottomTabs' as never }],
+          })
+        }
+        style={{
+          alignItems: 'center',
+          marginVertical: 20,
+        }}
+      >
+        <Text style={{ fontWeight: 'bold', fontSize: 16 }}>Skip ＞</Text>
       </Pressable>
 
       {/* <Pressable

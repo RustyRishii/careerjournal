@@ -196,7 +196,7 @@ export default Onboarding;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'beige',
+    // backgroundColor: 'beige',
   },
   header: {
     paddingVertical: 20,

@@ -9,7 +9,7 @@ const ProfileDetails = () => {
   const age = storage.getString('age');
   const gradYear = storage.getString('gradYear');
   const status = storage.getString('status');
-  const city = storage.getString('city');
+  const profession = storage.getString('profession');
 
   return (
     <View
@@ -40,8 +40,8 @@ const ProfileDetails = () => {
       </View>
 
       <View style={[styles.table, { borderBottomWidth: 0 }]}>
-        <Text style={{ fontSize: 16 }}>City</Text>
-        <Text style={{ fontSize: 16 }}>{city}</Text>
+        <Text style={{ fontSize: 16 }}>profession</Text>
+        <Text style={{ fontSize: 16 }}>{profession}</Text>
       </View>
     </View>
   );
@@ -49,6 +49,17 @@ const ProfileDetails = () => {
 
 const Settings = () => {
   const navigation = useNavigation();
+
+  const clearStorage = () => {
+    storage.clearAll();
+  };
+
+  function logoutOption() {
+    navigation.reset({
+      index: 0,
+      routes: [{ name: 'Login' as never }],
+    });
+  }
   return (
     <SafeAreaView
       edges={['top', 'left', 'right']}
@@ -75,12 +86,10 @@ const Settings = () => {
       </View>
 
       <Pressable
-        onPress={() =>
-          navigation.reset({
-            index: 0,
-            routes: [{ name: 'Login' as never }],
-          })
-        }
+        onPress={() => {
+          logoutOption();
+          clearStorage();
+        }}
         style={{
           marginTop: 'auto',
           backgroundColor: '#00ffff',

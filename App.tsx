@@ -15,6 +15,7 @@ import Home from './src/screens/home';
 import Login from './src/screens/login';
 import Onboarding from './src/screens/onboarding';
 import Settings from './src/screens/settings';
+import './global.css';
 
 export default function App() {
   return (

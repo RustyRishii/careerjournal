@@ -17,6 +17,8 @@ import { TextInput } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { storage } from '../storage';
 import * as Clipboard from 'expo-clipboard';
+// import * as data from '../quotes.json';
+import quotesData from '../quotes.json';
 
 const screenHeight = Dimensions.get('window').height;
 
@@ -70,6 +72,10 @@ const QuoteDisplay = memo(
 const Home = () => {
   const navigation = useNavigation();
 
+  // const { quotes } = data;
+
+  // console.log(quotes);
+
   const date = new Date();
   const monthName = date.toLocaleString('default', { month: 'long' }); // September
   const shortMonthName = date.toLocaleString('default', { month: 'short' }); // Sep
@@ -91,34 +97,54 @@ const Home = () => {
   const [quote, setQuote] = useState<string>('');
   const [author, setAuthor] = useState<string>('');
 
-  async function getQuote() {
-    const url = 'https://stoic-quotes.com/api/quote';
-    try {
-      const response = await fetch(url);
-      if (!response.ok) {
-        throw new Error(`Response status: ${response.status}`);
-      }
+  // async function getQuote() {
+  //   const url = 'https://stoic-quotes.com/api/quote';
+  //   try {
+  //     const response = await fetch(url);
+  //     if (!response.ok) {
+  //       throw new Error(`Response status: ${response.status}`);
+  //     }
 
-      const result = await response.json();
+  //     const result = await response.json();
 
-      const quote = result['text'];
-      setQuote(quote);
+  //     const quote = result['text'];
+  //     setQuote(quote);
 
-      const author = result['author'];
-      setAuthor(author);
-    } catch (error: unknown) {
-      if (error instanceof Error) console.error(error.message);
-    }
-  }
+  //     const author = result['author'];
+  //     setAuthor(author);
+  //   } catch (error: unknown) {
+  //     if (error instanceof Error) console.error(error.message);
+  //   }
+  // }
 
   useEffect(() => {
     onRefresh();
   }, []);
 
+  const fetchQuote = () => {
+    // Get the quotes array from your JSON
+    const quotesArray = quotesData.quotes;
+
+    // Generate a random index
+    const randomIndex = Math.floor(Math.random() * quotesArray.length);
+
+    // Get the random quote object
+    const randomQuote = quotesArray[randomIndex];
+
+    // Update your state
+    setQuote(randomQuote.text);
+    setAuthor(randomQuote.author);
+
+    console.log(randomQuote.text);
+    console.log(randomQuote.author);
+  };
+
   const onRefresh = () => {
-    console.log('Refreshed');
+    fetchQuote();
+    console.log('yooooooooo');
+    // console.log('Refreshed');
     setRefreshing(true);
-    getQuote();
+    // getQuote();
     setTimeout(() => {
       setRefreshing(false);
     }, 200);
@@ -148,6 +174,14 @@ const Home = () => {
         edges={['left', 'right', 'top']}
         style={{ marginVertical: 14, marginHorizontal: 14, flex: 1 }}
       >
+        <View>
+          <Text
+            style={{ textAlign: 'center', fontWeight: 'bold', fontSize: 18 }}
+          >
+            {day}
+            {getDaySuffix(day)} {shortMonthName} {year}
+          </Text>
+        </View>
         <ScrollView
           scrollEnabled={true}
           refreshControl={
@@ -155,89 +189,121 @@ const Home = () => {
           }
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{
-            paddingBottom: 20,
+            flexGrow: 1,
             justifyContent: 'center',
-            alignContent: 'center',
-            alignSelf: 'center',
+            paddingBottom: 20,
           }}
           keyboardShouldPersistTaps="handled"
           style={{ flex: 1 }}
           nestedScrollEnabled={true}
         >
-          <Text
-            style={{ textAlign: 'center', fontWeight: 'bold', fontSize: 18 }}
-          >
-            {day}
-            {getDaySuffix(day)} {shortMonthName} {year}
-          </Text>
-
-          <Pressable
+          {/* <Pressable
             onPress={() => {
-              console.log('Quote copied');
               copyToClipboard();
             }}
-            style={{
-              marginVertical: 16,
-              borderRadius: 8,
-              borderLeftWidth: 8,
-              borderLeftColor: 'aqua',
-              backgroundColor: 'aliceblue',
-              alignContent: 'center',
-              justifyContent: 'center',
-              height: screenHeight * 0.25,
-              padding: 8,
-              gap: 8,
-            }}
+            className=" border-l-[#00ffff] border-l-8 mt-4 my-2 p-2 bg-[#f0f8ff] rounded-2xl "
           >
             <Text style={{ fontSize: 18, fontStyle: 'italic' }}>{quote}</Text>
             <Text
-              style={{ fontSize: 18, textAlign: 'right', fontStyle: 'italic' }}
+              style={{
+                fontSize: 18,
+                marginTop: 12,
+                textAlign: 'right',
+                fontStyle: 'italic',
+              }}
             >
-              –{author}
+              -{author}
+            </Text>
+          </Pressable> */}
+
+          <Pressable
+            onLayout={(event) => {
+              const { height } = event.nativeEvent.layout;
+              const { width } = event.nativeEvent.layout;
+              console.log('📏 Quote section height & width:', height, width);
+            }}
+            onPress={() => {
+              copyToClipboard();
+            }}
+            className="border-l-[#00ffff] h-[180px] align-middle justify-center border-l-8 mt-4 my-2 p-2 bg-[#f0f8ff] rounded-2xl"
+          >
+            <Text style={{ fontSize: 18, fontStyle: 'italic' }}>{quote}</Text>
+            <Text
+              style={{
+                fontSize: 18,
+                marginTop: 12,
+                textAlign: 'right',
+                fontStyle: 'italic',
+              }}
+            >
+              -{author}
             </Text>
           </Pressable>
 
+          <View className="flex-row m-5 j justify-between content-center">
+            <Pressable hitSlop={10} onPress={() => onRefresh()}>
+              <Text className="text-[18px]">🔄</Text>
+            </Pressable>
+
+            <Pressable
+              hitSlop={10}
+              onPress={() => console.log('Saved to server')}
+            >
+              <Text className="text-[18px]">💾</Text>
+            </Pressable>
+
+            <Pressable hitSlop={10} onPress={() => copyToClipboard()}>
+              <Text className="text-[18px]">©️</Text>
+            </Pressable>
+          </View>
+
           {/* <Text>{Math.floor(Math.random() * 100) + 1}</Text> */}
-
-          <Text style={{ marginBottom: 8, fontSize: 18 }}>
-            What did I learn today?
-          </Text>
-          <TextInput
-            value={learn}
-            onChangeText={setLearn}
-            scrollEnabled={true}
-            multiline={true}
-            placeholder="Reflect on your new skills, insights, or any knowledge you gained today"
-            style={{
-              borderWidth: 1.5,
-              borderColor: 'green',
-              borderRadius: 12,
-              paddingBottom: 10,
-              height: screenHeight * 0.12,
-              fontSize: 16,
-            }}
-          />
-
-          <Text style={{ marginTop: 20, marginBottom: 8, fontSize: 18 }}>
-            What did I solve today?
+          <Text className="text-center font-bold text-2xl my-3 ">
+            Daily reflection
           </Text>
 
-          <TextInput
-            value={solve}
-            onChangeText={setSolve}
-            scrollEnabled={true}
-            placeholder="Describe a challenege you came across today and fixed how you fixed it."
-            multiline={true}
-            style={{
-              marginBottom: 30,
-              borderColor: 'green',
-              borderRadius: 12,
-              height: screenHeight * 0.12,
-              borderWidth: 1.5,
-              paddingBottom: 10,
-              fontSize: 16,
-            }}
-          />
+          <View>
+            <Text style={{ marginBottom: 8, fontSize: 18 }}>
+              What did I learn today?
+            </Text>
+            <TextInput
+              value={learn}
+              onChangeText={setLearn}
+              scrollEnabled={true}
+              multiline={true}
+              placeholder="Reflect on your new skills, insights, or any knowledge you gained today"
+              style={{
+                borderWidth: 1.5,
+                borderColor: 'green',
+                borderRadius: 12,
+                paddingBottom: 10,
+                height: screenHeight * 0.12,
+                fontSize: 16,
+              }}
+            />
+          </View>
+
+          <View>
+            <Text style={{ marginTop: 20, marginBottom: 8, fontSize: 18 }}>
+              What did I solve today?
+            </Text>
+            <TextInput
+              value={solve}
+              onChangeText={setSolve}
+              scrollEnabled={true}
+              placeholder="Describe a challenege you came across today and fixed how you fixed it."
+              multiline={true}
+              style={{
+                marginBottom: 30,
+                borderColor: 'green',
+                borderRadius: 12,
+                height: screenHeight * 0.12,
+                borderWidth: 1.5,
+                paddingBottom: 10,
+                fontSize: 16,
+              }}
+            />
+          </View>
         </ScrollView>
 
         <Pressable

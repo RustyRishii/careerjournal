@@ -40,4 +40,6 @@ config.resolver = {
   sourceExts: [...resolver.sourceExts, 'svg'],
 };
 
+config.resolver.assetExts.push('lottie');
+
 module.exports = withNativeWind(config, { input: './global.css' });

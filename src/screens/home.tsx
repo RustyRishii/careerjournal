@@ -1,6 +1,7 @@
 import { useNavigation } from '@react-navigation/native';
 import React, { memo, useState } from 'react';
 import { useEffect } from 'react';
+import { useRef } from 'react';
 import {
   KeyboardAvoidingView,
   RefreshControl,
@@ -19,6 +20,7 @@ import { storage } from '../storage';
 import * as Clipboard from 'expo-clipboard';
 // import * as data from '../quotes.json';
 import quotesData from '../quotes.json';
+import LottieView from 'lottie-react-native';
 
 const screenHeight = Dimensions.get('window').height;
 
@@ -60,8 +62,8 @@ const QuoteDisplay = memo(
           gap: 8,
         }}
       >
-        <Text style={{ fontSize: 18, fontStyle: 'italic' }}>{quote}</Text>
-        <Text style={{ fontSize: 18, textAlign: 'right', fontStyle: 'italic' }}>
+        <Text style={{ fontSize: 20, fontStyle: 'italic' }}>{quote}</Text>
+        <Text style={{ fontSize: 16, textAlign: 'right', fontStyle: 'italic' }}>
           –{author}
         </Text>
       </Pressable>
@@ -71,6 +73,9 @@ const QuoteDisplay = memo(
 
 const Home = () => {
   const navigation = useNavigation();
+
+  const copyAnimation = useRef<LottieView>(null);
+  const bookmarkAnimation = useRef<LottieView>(null);
 
   // const { quotes } = data;
 
@@ -141,6 +146,10 @@ const Home = () => {
 
   const onRefresh = () => {
     fetchQuote();
+    if (bookmarkAnimation.current) {
+      bookmarkAnimation.current.reset(); // This will reset the bookmark animation to the start
+    }
+
     console.log('yooooooooo');
     // console.log('Refreshed');
     setRefreshing(true);
@@ -158,11 +167,11 @@ const Home = () => {
 
   const copyToClipboard = async () => {
     await Clipboard.setStringAsync(`${quote}\n\n— ${author}`);
-    ToastAndroid.showWithGravity(
-      'Quote copied',
-      ToastAndroid.SHORT,
-      ToastAndroid.CENTER,
-    );
+    // ToastAndroid.showWithGravity(
+    //   'Quote copied',
+    //   ToastAndroid.SHORT,
+    //   ToastAndroid.CENTER,
+    // );
   };
 
   return (
@@ -176,7 +185,7 @@ const Home = () => {
       >
         <View>
           <Text
-            style={{ textAlign: 'center', fontWeight: 'bold', fontSize: 18 }}
+            style={{ textAlign: 'center', fontWeight: 'bold', fontSize: 14 }}
           >
             {day}
             {getDaySuffix(day)} {shortMonthName} {year}
@@ -227,10 +236,10 @@ const Home = () => {
             }}
             className="border-l-[#00ffff] h-[180px] align-middle justify-center border-l-8 mt-4 my-2 p-2 bg-[#f0f8ff] rounded-2xl"
           >
-            <Text style={{ fontSize: 18, fontStyle: 'italic' }}>{quote}</Text>
+            <Text style={{ fontSize: 20, fontStyle: 'italic' }}>{quote}</Text>
             <Text
               style={{
-                fontSize: 18,
+                fontSize: 16,
                 marginTop: 12,
                 textAlign: 'right',
                 fontStyle: 'italic',
@@ -240,25 +249,52 @@ const Home = () => {
             </Text>
           </Pressable>
 
-          <View className="flex-row m-5 j justify-between content-center">
+          <View className="flex-row m-5 gap-12 justify-center content-center align-middle">
             <Pressable hitSlop={10} onPress={() => onRefresh()}>
-              <Text className="text-[18px]">🔄</Text>
+              <Text className="text-[22px]">🔄</Text>
             </Pressable>
+
+            {/* <Pressable
+              hitSlop={10}
+              onPress={() => {
+                bookmarkAnimation.current!.play();
+              }}
+            >
+              <LottieView
+                autoPlay={false}
+                loop={false}
+                ref={bookmarkAnimation}
+                style={{
+                  height: 40,
+                  width: 30,
+                }}
+                source={require('../../assets/lottieFiles/bookmark.json')}
+              />
+            </Pressable> */}
 
             <Pressable
               hitSlop={10}
-              onPress={() => console.log('Saved to server')}
+              onPress={() => {
+                copyToClipboard();
+                copyAnimation.current!.play();
+              }}
             >
-              <Text className="text-[18px]">💾</Text>
-            </Pressable>
-
-            <Pressable hitSlop={10} onPress={() => copyToClipboard()}>
-              <Text className="text-[18px]">©️</Text>
+              <LottieView
+                autoPlay={false}
+                loop={false}
+                ref={copyAnimation}
+                style={{
+                  height: 40,
+                  width: 30,
+                  // backgroundColor: 'red',
+                }}
+                source={require('../../assets/lottieFiles/Copy.json')}
+              />
             </Pressable>
           </View>
 
           {/* <Text>{Math.floor(Math.random() * 100) + 1}</Text> */}
-          <Text className="text-center font-bold text-2xl my-3 ">
+          <Text className="text-center font-bold text-3xl my-3 ">
             Daily reflection
           </Text>
 
@@ -318,7 +354,7 @@ const Home = () => {
             marginTop: 14,
           }}
         >
-          <Text>Submit</Text>
+          <Text style={{ fontSize: 18 }}>Submit</Text>
         </Pressable>
       </SafeAreaView>
     </KeyboardAvoidingView>
@@ -336,7 +372,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 14,
     borderRadius: 8,
-    // marginBottom: 28,
   },
   quoteText: {
     fontSize: 14,

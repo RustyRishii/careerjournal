@@ -260,10 +260,10 @@ const Home = () => {
             </Text>
           </Pressable>
 
-          <View className="flex-row m-5 gap-12 justify-center content-center align-middle">
-            <Pressable hitSlop={10} onPress={() => onRefresh()}>
+          <View className="flex-row  bg-slate-600-400 gap-12 justify-center content-center align-middle">
+            {/* <Pressable hitSlop={10} onPress={() => onRefresh()}>
               <Text className="text-[22px]">🔄</Text>
-            </Pressable>
+            </Pressable> */}
 
             <Pressable
               hitSlop={10}

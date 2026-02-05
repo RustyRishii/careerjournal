@@ -76,6 +76,7 @@ const Home = () => {
 
   const copyAnimation = useRef<LottieView>(null);
   const bookmarkAnimation = useRef<LottieView>(null);
+  const refreshAnimation = useRef<LottieView>(null);
 
   // const { quotes } = data;
 
@@ -261,9 +262,24 @@ const Home = () => {
           </Pressable>
 
           <View className="flex-row  bg-slate-600-400 gap-12 justify-center content-center align-middle">
-            {/* <Pressable hitSlop={10} onPress={() => onRefresh()}>
-              <Text className="text-[22px]">🔄</Text>
-            </Pressable> */}
+            <Pressable
+              hitSlop={10}
+              onPress={() => {
+                onRefresh();
+                refreshAnimation.current!.play();
+              }}
+            >
+              <LottieView
+                autoPlay={false}
+                loop={false}
+                ref={refreshAnimation}
+                style={{
+                  height: 40,
+                  width: 30,
+                }}
+                source={require('../../assets/lottieFiles/refresh.json')}
+              />
+            </Pressable>
 
             <Pressable
               hitSlop={10}

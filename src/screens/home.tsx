@@ -185,6 +185,17 @@ const Home = () => {
       >
         <View>
           <Text
+            style={{
+              textAlign: 'center',
+              fontStyle: 'italic',
+              fontWeight: 'bold',
+            }}
+          >
+            Double tap on the quote to screen shot it.
+          </Text>
+        </View>
+        <View>
+          <Text
             style={{ textAlign: 'center', fontWeight: 'bold', fontSize: 14 }}
           >
             {day}
@@ -254,7 +265,7 @@ const Home = () => {
               <Text className="text-[22px]">🔄</Text>
             </Pressable>
 
-            {/* <Pressable
+            <Pressable
               hitSlop={10}
               onPress={() => {
                 bookmarkAnimation.current!.play();
@@ -270,7 +281,7 @@ const Home = () => {
                 }}
                 source={require('../../assets/lottieFiles/bookmark.json')}
               />
-            </Pressable> */}
+            </Pressable>
 
             <Pressable
               hitSlop={10}
